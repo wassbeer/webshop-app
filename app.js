@@ -5,9 +5,17 @@ const express = require( 'express' ),
 	Sequelize = require( 'sequelize' ),
 	bodyParser = require( 'body-parser' ),
 	session = require( "express-session" ),
+	SequelizeStore = require ("connect-session-sequelize")( session.Store ),
 	bcrypt = require( 'bcrypt' ),
 	saltRounds = 10,
-	port = process.env.PORT || 8000
+	port = process.env.PORT || 8000;
+	var db = new Sequelize( "webshop_app", process.env.POSTGRES_USER, process.env.POSTGRES_PASSWORD, {
+	host: "localhost",
+	dialect: "postgres",
+	define: {
+		timestamps: false
+	}
+} )
 
 const app = express();
 
@@ -86,7 +94,7 @@ Event.belongsTo( User );
 // GET
 
 app.get( "/", ( req, res ) => {
-
+	res.send("Application running!")
 } );
 
 app.get( "/signin", ( req, res ) => {
@@ -106,7 +114,7 @@ app.get( "/checkout", ( req, res ) => {
 
 app.get( "/checkout/:id", ( req, res ) => {
 	let user = req.session.user;
-}
+});
 
 // POST
 
