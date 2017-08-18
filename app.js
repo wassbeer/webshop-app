@@ -5,11 +5,11 @@ const express = require( 'express' ),
 	Sequelize = require( 'sequelize' ),
 	bodyParser = require( 'body-parser' ),
 	session = require( "express-session" ),
-	SequelizeStore = require ("connect-session-sequelize")( session.Store ),
+	SequelizeStore = require( "connect-session-sequelize" )( session.Store ),
 	bcrypt = require( 'bcrypt' ),
 	saltRounds = 10,
 	port = process.env.PORT || 8000;
-	var db = new Sequelize( "webshop_app", process.env.POSTGRES_USER, process.env.POSTGRES_PASSWORD, {
+var db = new Sequelize( "webshop_app", process.env.POSTGRES_USER, process.env.POSTGRES_PASSWORD, {
 	host: "localhost",
 	dialect: "postgres",
 	define: {
@@ -18,26 +18,6 @@ const express = require( 'express' ),
 } )
 
 const app = express();
-
-// Configuring app 
-
-app.use( bodyParser.urlencoded( { extended: true } ) );
-app.use( express.static( __dirname + '/public' ) );
-app.use( session( {
-	secret: "whatever",
-	store: new SequelizeStore( {
-		db: db,
-		checkExpirationInterval: 15 * 60 * 1000, 
-		expiration: 24 * 60 * 60 * 1000 
-	} ),
-	saveUnitialized: true,
-	resave: true
-} ) );
-
-// Setting view engine
-
-app.set( "views", "./views" );
-app.set( "view engine", "pug" );
 
 // Configuring db
 
@@ -49,6 +29,26 @@ db = new Sequelize( "webshop_app", process.env.POSTGRES_USER, process.env.POSTGR
 		notNull: false
 	}
 } );
+
+// Configuring app 
+
+app.use( bodyParser.urlencoded( { extended: true } ) );
+app.use( express.static( __dirname + '/public' ) );
+app.use( session( {
+	secret: "whatever",
+	store: new SequelizeStore( {
+		db: db,
+		checkExpirationInterval: 15 * 60 * 1000,
+		expiration: 24 * 60 * 60 * 1000
+	} ),
+	saveUnitialized: true,
+	resave: true
+} ) );
+
+// Setting view engine
+
+app.set( "views", "./views" );
+app.set( "view engine", "pug" );
 
 // Establishing DB Connection
 
@@ -94,7 +94,7 @@ Event.belongsTo( User );
 // GET
 
 app.get( "/", ( req, res ) => {
-	res.send("Application running!")
+	res.send( "Application running!" )
 } );
 
 app.get( "/signin", ( req, res ) => {
@@ -105,30 +105,30 @@ app.get( "/signup", ( req, res ) => {
 
 } );
 
-app.get( "/checkout", ( req, res ) => {
-	let user = req.session.user;
-	res.redirect( '/checkout' + user.id );
-} );
-
 // Dynamic route
 
 app.get( "/checkout/:id", ( req, res ) => {
-	let user = req.session.user;
-});
+	// let user = req.session.user;
+	res.render("checkout");
+} );
 
 // POST
 
 app.post( "/signin", ( req, res ) => {
+	// sign in 
 
+	// session
+	req.session.user = user;
+	res.redirect( "/checkout/" + user.firstname )
 } );
 
 app.post( "/signup", ( req, res ) => {
-	
+
 } );
 
-app.post( "/checkout", (req, res) => {
+app.post( "/checkout", ( req, res ) => {
 
-});
+} );
 
 // server launch
 
