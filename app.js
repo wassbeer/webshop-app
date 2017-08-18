@@ -30,7 +30,7 @@ db = new Sequelize( "webshop_app", process.env.POSTGRES_USER, process.env.POSTGR
 	}
 } );
 
-// Configuring app 
+// Configuring app
 
 app.use( bodyParser.urlencoded( { extended: true } ) );
 app.use( express.static( __dirname + '/public' ) );
@@ -94,7 +94,7 @@ Event.belongsTo( User );
 // GET
 
 app.get( "/", ( req, res ) => {
-	res.send( "Application running!" )
+	res.render( "index" )
 } );
 
 app.get( "/signin", ( req, res ) => {
@@ -115,7 +115,7 @@ app.get( "/checkout/:id", ( req, res ) => {
 // POST
 
 app.post( "/signin", ( req, res ) => {
-	// sign in 
+	// sign in
 
 	// session
 	req.session.user = user;
