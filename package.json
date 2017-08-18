@@ -15,6 +15,7 @@
     "connect-session-sequelize": "^4.1.0",
     "express": "^4.15.4",
     "express-session": "^1.15.5",
+    "paypal-rest-sdk": "^1.7.1",
     "pg": "^7.1.2",
     "pug": "^2.0.0-rc.3",
     "sequelize": "^4.5.0"
