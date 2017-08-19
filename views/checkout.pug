@@ -3,7 +3,9 @@ html
 	head
 		meta(http-equiv='X-UA-Compatible', content='IE=edge')
 		script(src='https://www.paypalobjects.com/api/checkout.js')
+		script(src='http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js')
 	body
+		input#amountBox(type="number" name="quantity" min="1" max="100")
 		#paypal-button-container
 		script.
 			paypal.Button.render({
@@ -17,7 +19,7 @@ html
 			// Show the buyer a 'Pay Now' button in the checkout flow
 			commit: true,
 			// payment() is called when the button is clicked
-			payment: function(data, actions) {
+			payment: (data, actions) => {
 			// Make a call to the REST api to create the payment
 			return actions.payment.create({
 			payment: {
@@ -30,10 +32,15 @@ html
 			});
 			},
 			// onAuthorize() is called when the buyer approves the payment
-			onAuthorize: function(data, actions) {
+			onAuthorize: (data, actions) => {
 			// Make a call to the REST api to execute the payment
-			return actions.payment.execute().then(function() {
+
+			return actions.payment.execute().then( ()=> {
+				$(document).ready(() =>{
+					//- let orderQuantity = req.body.orderQuantity
+					let orderQuantity = $("#amountBox").val();
+							$.post("/pay", {orderQuantity: orderQuantity});
+						})});
 			window.alert('Payment Complete!');
-			});
-			}
+			};
 			}, '#paypal-button-container');

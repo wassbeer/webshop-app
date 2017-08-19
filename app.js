@@ -252,7 +252,14 @@ app.post( "/signup", ( req, res ) => {
 } );
 
 app.post( "/pay", ( req, res ) => {
-
+Order.create{
+	{	
+		product: "Leather holder of 6-pack",
+		amount: orderQuantity
+	}.then( order => {
+		res.redirect("/thankyou/:id")
+	})
+}
 } );
 
 app.post( "/accountupdate", ( req, res ) => {
