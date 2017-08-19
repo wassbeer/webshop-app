@@ -1,23 +1,16 @@
+body {
+  font-family: 'Space Mono', monospace;
+}
+
 .caption {
-  padding-top: 100px;
+  padding-top: 150px;
 }
 
 #formbox {
-  margin-top: 100px;
+  margin-top: 75px;
+  padding-top: 50px;
 }
 
-#login button {
-  margin: 20px;
-}
-
-#login form {
-  margin-top: 50px;
-}
-
-#signup button {
-  margin: 20px;
-}
-
-#signup form {
+#logo {
   margin-top: 50px;
 }

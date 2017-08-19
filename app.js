@@ -107,10 +107,10 @@ const Order = db.define( "order", {
 
 Account.hasMany( Order );
 Order.belongsTo( Account );
-Account.hasMany( Event );
-Event.belongsTo( Account );
-Order.hasOne( Event );
-Event.belongsTo( Order );
+// Account.hasMany( Event );
+// Event.belongsTo( Account );
+// Order.hasOne( Event );
+// Event.belongsTo( Order );
 
 // GET
 
@@ -119,7 +119,12 @@ app.get( "/", ( req, res ) => {
 } );
 
 app.get( "/login", ( req, res ) => {
-	res.render( "login" )
+	let user = req.session.user;
+	if ( user === undefined ) {
+		res.render( "login" )
+	} else {
+		res.redirect( "/account/" + user.id )
+	}
 } );
 
 app.get( "/signup", ( req, res ) => {
@@ -162,7 +167,7 @@ app.get( "/thankyou/:id", ( req, res ) => {
 			.then( user => {
 				Order.findAll().then( order => {
 				res.render( "thankyou", { user: user, order: order } )
-			} )}).
+			} )})
 			.catch( error => {
 				res.redirect( 'login/?message=' + encodeURIComponent( "Something going horribly wrong" ) );
 			} )
@@ -182,7 +187,7 @@ app.get( "/account/:id", ( req, res ) => {
 			} )
 			.then( user => {
 				Order.findAll().then( order => {
-				res.render( "account" { user: user } )
+				res.render( "account", { user: user } )
 			} )})
 			.catch( error => {
 				res.redirect( 'login/?message=' + encodeURIComponent( "Something going horribly wrong" ) );
