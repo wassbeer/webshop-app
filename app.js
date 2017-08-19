@@ -19,17 +19,6 @@ var db = new Sequelize( "webshop_app", process.env.POSTGRES_USER, process.env.PO
 
 const app = express();
 
-// Configuring db
-
-db = new Sequelize( "webshop_app", process.env.POSTGRES_USER, process.env.POSTGRES_PASSWORD, {
-	host: "localhost",
-	dialect: "postgres",
-	define: {
-		timestamps: true,
-		notNull: false
-	}
-} );
-
 // Configuring app
 
 app.use( bodyParser.urlencoded( { extended: true } ) );
@@ -50,13 +39,23 @@ app.use( session( {
 app.set( "views", "./views" );
 app.set( "view engine", "pug" );
 
+// Configuring db
+
+db = new Sequelize( "webshop_app", process.env.POSTGRES_USER, process.env.POSTGRES_PASSWORD, {
+	host: "localhost",
+	dialect: "postgres",
+	define: {
+		timestamps: true
+	}
+} );
+
 // Establishing DB Connection
 
 db.sync( { force: false } )
 
 // Defining models: User and Event
 
-const User = db.define( "user", {
+const Account = db.define( "account", {
 	first: {
 		type: Sequelize.STRING
 	},
@@ -66,7 +65,16 @@ const User = db.define( "user", {
 	email: {
 		type: Sequelize.STRING
 	},
-	username: {
+	address: {
+		type: Sequelize.STRING
+	},
+	city: {
+		type: Sequelize.STRING
+	},
+	country: {
+		type: Sequelize.STRING
+	},
+	zip: {
 		type: Sequelize.STRING
 	},
 	password: {
@@ -74,22 +82,35 @@ const User = db.define( "user", {
 	}
 } );
 
-const Event = db.define( "event", {
-	type: {
+const Order = db.define( "order", {
+	product: {
 		type: Sequelize.STRING
 	},
 	amount: {
-		type: Sequelize.INTEGER
-	},
-	product: {
 		type: Sequelize.STRING
 	}
-} );
+} )
+
+// const Event = db.define( "event", {
+// 	type: {
+// 		type: Sequelize.STRING
+// 	},
+// 	amount: {
+// 		type: Sequelize.INTEGER
+// 	},
+// 	product: {
+// 		type: Sequelize.STRING
+// 	}
+// } );
 
 // Defining relations
 
-User.hasMany( Event );
-Event.belongsTo( User );
+Account.hasMany( Order );
+Order.belongsTo( Account );
+Account.hasMany( Event );
+Event.belongsTo( Account );
+Order.hasOne( Event );
+Event.belongsTo( Order );
 
 // GET
 
@@ -97,45 +118,158 @@ app.get( "/", ( req, res ) => {
 	res.render( "index" )
 } );
 
-app.get( "/account", ( req, res ) => {
-	res.render( "account" )
-} );
-
-app.get( "/signin", ( req, res ) => {
-
+app.get( "/login", ( req, res ) => {
+	res.render( "login" )
 } );
 
 app.get( "/signup", ( req, res ) => {
+	res.render( "signup" )
+} )
 
-} );
-
-// Dynamic route
+// Dynamic routes
 
 app.get( "/checkout/:id", ( req, res ) => {
-	// let user = req.session.user;
-	res.render("checkout");
+	let user = req.session.user;
+	if ( user === undefined ) {
+		let message = "Please log in to checkout!";
+		res.render( "login", { message: message } )
+	} else {
+		Account.findOne( {
+				where: {
+					id: user.id
+				}
+			} )
+			.then( user => {
+				res.render( "checkout", { user: user } )
+			} )
+			.catch( error => {
+				res.redirect( 'login/?message=' + encodeURIComponent( "Something going horribly wrong" ) );
+			} )
+	};
+} );
+
+app.get( "/thankyou/:id", ( req, res ) => {
+	let user = req.session.user;
+	if ( user === undefined ) {
+		let message = "Please log in to receive grace from us!";
+		res.render( "login", { message: message } )
+	} else {
+		Account.findOne( {
+				where: {
+					id: user.id
+				}
+			} )
+			.then( user => {
+				Order.findAll().then( order => {
+				res.render( "thankyou", { user: user, order: order } )
+			} )}).
+			.catch( error => {
+				res.redirect( 'login/?message=' + encodeURIComponent( "Something going horribly wrong" ) );
+			} )
+	}
+} );
+
+app.get( "/account/:id", ( req, res ) => {
+	let user = req.session.user;
+	if ( user === undefined ) {
+		let message = "Please log in to view your account!";
+		res.render( "login", { message: message } )
+	} else {
+		Account.findOne( {
+				where: {
+					id: user.id
+				}
+			} )
+			.then( user => {
+				Order.findAll().then( order => {
+				res.render( "account" { user: user } )
+			} )})
+			.catch( error => {
+				res.redirect( 'login/?message=' + encodeURIComponent( "Something going horribly wrong" ) );
+			} )
+	}
 } );
 
 // POST
 
-app.post( "/signin", ( req, res ) => {
-	// sign in
-
-	// session
-	req.session.user = user;
-	res.redirect( "/checkout/" + user.firstname )
+app.post( "/login", ( req, res ) => {
+	let email = req.body.email;
+	let plainPassword = req.body.password;
+	Account.findOne( {
+			where: {
+				email: email
+			}
+		} )
+		.then( user => {
+			hash = user.password;
+			if (
+				bcrypt.compare( plainPassword, hash ).then( res => {
+					return res;
+				} ) ) {
+				req.session.user = user;
+				res.redirect( `/checkout/${account.first}` );
+			} else {
+				let message = "Invalid e-mail or password";
+				res.render( "login", { message: message } );
+			}
+		} )
+		.catch( error => {
+			res.redirect( 'login/?message=' + encodeURIComponent( "Something going horribly wrong" ) );
+		} )
 } );
 
 app.post( "/signup", ( req, res ) => {
+	let plainPassword = req.body.password;
+	bcrypt.hash( plainPassword, saltRounds, ( err, hash )  => {
+		Account.findOne( {
+				where: {
+					username: req.body.username
+				}
+			} )
+			.then( user => {
+				if ( user ) {
+					res.render( "signup", { message: `username ${req.body.username} already taken` } )
+				} else {
+					Account.create( {
+							first: req.body.first,
+							last: req.body.last,
+							email: req.body.email,
+							address: req.body.address,
+							city: req.body.city,
+							country: req.body.country,
+							zip: req.country.zip,
+							password: hash
+						} )
+						.then( user  => {
+							res.redirect( "login" )
+						} )
+						.catch( error => {
+							res.redirect( 'login/?message=' + encodeURIComponent( "Something going horribly wrong" ) );
+						} )
+				}
+			} )
+	} )
+} );
+
+app.post( "/pay", ( req, res ) => {
 
 } );
 
-app.post( "/checkout", ( req, res ) => {
+app.post( "/accountupdate", ( req, res ) => {
 
+} );
+
+app.post( "/logout", ( req, res ) => {
+	req.session.destroy( error => {
+		if ( error ) {
+			throw error;
+		}
+		res.render( "index", { message: "logged out succesfully!" } )
+	} );
 } );
 
 // server launch
 
-app.listen( port, function( res ) {
+app.listen( port, res => {
 	console.log( "App listening in port " + port )
 } )
