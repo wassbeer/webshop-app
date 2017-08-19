@@ -45,8 +45,7 @@ db = new Sequelize( "webshop_app", process.env.POSTGRES_USER, process.env.POSTGR
 	host: "localhost",
 	dialect: "postgres",
 	define: {
-		timestamps: true,
-		notNull: false
+		timestamps: true
 	}
 } );
 
@@ -56,7 +55,7 @@ db.sync( { force: false } )
 
 // Defining models: User and Event
 
-const User = db.define( "user", {
+const Account = db.define( "account", {
 	first: {
 		type: Sequelize.STRING
 	},
@@ -66,13 +65,28 @@ const User = db.define( "user", {
 	email: {
 		type: Sequelize.STRING
 	},
-	username: {
+	address: {
 		type: Sequelize.STRING
 	},
-	password: {
+	city: {
+		type: Sequelize.STRING
+	},
+	country: {
+		type: Sequelize.STRING
+	},
+	zip: {
 		type: Sequelize.STRING
 	}
 } );
+
+const Order = db.define( "order", {
+	product: {
+		type: Sequelize.STRING
+	},
+	amount: {
+		type: Sequelize.STRING
+	}
+} )
 
 const Event = db.define( "event", {
 	type: {
@@ -88,8 +102,12 @@ const Event = db.define( "event", {
 
 // Defining relations
 
-User.hasMany( Event );
-Event.belongsTo( User );
+Account.hasMany(Order);
+Order.belongsTo( Account );
+Account.hasMany( Event );
+Event.belongsTo( Account );
+Order.hasOne ( Event );
+Event.belongsTo( Order );
 
 // GET
 
@@ -97,20 +115,32 @@ app.get( "/", ( req, res ) => {
 	res.send( "Application running!" )
 } );
 
-app.get( "/signin", ( req, res ) => {
+app.get( "/login", ( req, res ) => {
 
 } );
 
-// Dynamic route
+app.get("/signup", (req, res ) => {
+
+})
+
+// Dynamic routes
 
 app.get( "/checkout/:id", ( req, res ) => {
 	// let user = req.session.user;
 	res.render( "checkout" );
 } );
 
+app.get("/thankyou/:id", (req, res) => {
+
+});
+
+app.get("/account/:id", (req, res) => {
+
+});
+
 // POST
 
-app.post( "/signin", ( req, res ) => {
+app.post( "/login", ( req, res ) => {
 	// sign in 
 
 	// session
@@ -122,9 +152,17 @@ app.post( "/signup", ( req, res ) => {
 
 } );
 
-app.post( "/checkout", ( req, res ) => {
+app.post( "/pay", ( req, res ) => {
 
 } );
+
+app.post( "/accountupdate", (req, res) => {
+
+});
+
+app.post("/logout", (req, res) => {
+
+});
 
 // server launch
 

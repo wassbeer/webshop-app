@@ -12,18 +12,18 @@ For UX we decided to store order history under my account to keep the layout of 
 
 STEPS:
 
-1. Dependencies: express, body-parser, express-session, sequelize, connect-session-sequelize, bcrypt
-2. App.set: pug
-3. App.use: express static, bodyparser.urlencoded, session(new SequelizeStore)
-4. Database: db, "webshop_app", timestamps: true. db.sync({force:false})
-5. Models: Account(first, last, e-mail, address, city, country, ZIP, password), Order(product, amount), Event(event)
-6. Model relations: Account.hasMany(Order), Order.belongsTo( Account ), Account.hasMany( Event ), Event.belongsTo( Account ), Order.hasOne ( Event ). Event.belongsTo( Order )
-6. GET routes: /, /login, /signup, /checkout/:id, /thankyou/:id, /account/:id
-7. POST routes: /login, /signup, /pay(in PayPal button), /accountupdate, /logout
-8. Sessions: * Evaluate: /, /login, /signup, /checkout, /thankyou /account, * Create: /login, *Destroy: /logout
-9. DB CRUD: Account.findOne @ GET /login /signup /checkout /thankyou /account, POST /buy, Order.findAll @ GET /account /thankyou, Event.create @ GET /checkout /thankyou
-10. Validation: input fields(not empty and minimum length password), availability e-mail
-11. Encryption: bcrypt.hash @ POST /signup, bcrypt.compare @ GET /login 
+<!-- 1. Dependencies: express, body-parser, express-session, pg, sequelize, connect-session-sequelize, bcrypt -->
+<!-- 2. App.set: pug -->
+<!-- 3. App.use: express static, bodyparser.urlencoded, session(new SequelizeStore) -->
+<!-- 4. Database: db, "webshop_app", timestamps: true. db.sync({force:false}) -->
+<!-- 5. Models: Account(first, last, e-mail, address, city, country, ZIP, password), Order(product, amount), Event(event) -->
+<!-- 6. Model relations: Account.hasMany(Order), Order.belongsTo( Account ), Account.hasMany( Event ), Event.belongsTo( Account ), Order.hasOne ( Event ). Event.belongsTo( Order ) -->
+<!-- 7. GET routes: /, /login, /signup, /checkout/:id, /thankyou/:id, /account/:id -->
+<!-- 8. POST routes: /login, /signup, /pay(in PayPal button), /accountupdate, /logout -->
+9. Sessions: * Evaluate: /, /login, /signup, /checkout, /thankyou /account, * Create: /login, *Destroy: /logout
+10. DB CRUD: Account.findOne @ GET /login /signup /checkout /thankyou /account, POST /buy, Order.findAll @ GET /account /thankyou, Event.create @ GET /checkout /thankyou
+11. Validation: input fields(not empty and minimum length password), availability e-mail
+12. Encryption: bcrypt.hash @ POST /signup, bcrypt.compare @ GET /login 
 
 BEYOND MVP:
 * Add "Start session", "Destroy session" and "Visit time" to the model Event and create a row on entering and leaving the site.
