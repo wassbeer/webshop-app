@@ -19,18 +19,7 @@ var db = new Sequelize( "webshop_app", process.env.POSTGRES_USER, process.env.PO
 
 const app = express();
 
-// Configuring db
-
-db = new Sequelize( "webshop_app", process.env.POSTGRES_USER, process.env.POSTGRES_PASSWORD, {
-	host: "localhost",
-	dialect: "postgres",
-	define: {
-		timestamps: true,
-		notNull: false
-	}
-} );
-
-// Configuring app
+// Configuring app 
 
 app.use( bodyParser.urlencoded( { extended: true } ) );
 app.use( express.static( __dirname + '/public' ) );
@@ -49,6 +38,17 @@ app.use( session( {
 
 app.set( "views", "./views" );
 app.set( "view engine", "pug" );
+
+// Configuring db
+
+db = new Sequelize( "webshop_app", process.env.POSTGRES_USER, process.env.POSTGRES_PASSWORD, {
+	host: "localhost",
+	dialect: "postgres",
+	define: {
+		timestamps: true,
+		notNull: false
+	}
+} );
 
 // Establishing DB Connection
 
@@ -94,14 +94,10 @@ Event.belongsTo( User );
 // GET
 
 app.get( "/", ( req, res ) => {
-	res.render( "index" )
+	res.send( "Application running!" )
 } );
 
 app.get( "/signin", ( req, res ) => {
-
-} );
-
-app.get( "/signup", ( req, res ) => {
 
 } );
 
@@ -109,13 +105,13 @@ app.get( "/signup", ( req, res ) => {
 
 app.get( "/checkout/:id", ( req, res ) => {
 	// let user = req.session.user;
-	res.render("checkout");
+	res.render( "checkout" );
 } );
 
 // POST
 
 app.post( "/signin", ( req, res ) => {
-	// sign in
+	// sign in 
 
 	// session
 	req.session.user = user;
