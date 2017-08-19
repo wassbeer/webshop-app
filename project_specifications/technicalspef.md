@@ -20,7 +20,7 @@ STEPS:
 <!-- 6. Model relations: Account.hasMany(Order), Order.belongsTo( Account ), Account.hasMany( Event ), Event.belongsTo( Account ), Order.hasOne ( Event ). Event.belongsTo( Order ) -->
 <!-- 7. GET routes: /, /login, /signup, /checkout/:id, /thankyou/:id, /account/:id -->
 <!-- 8. POST routes: /login, /signup, /pay(in PayPal button), /accountupdate, /logout -->
-9. Sessions: * Evaluate: /, /login, /signup, /checkout, /thankyou /account, * Create: /login, *Destroy: /logout
+<!-- 9. Sessions: * Evaluate: /, /login, /signup, /checkout, /thankyou /account, * Create: /login, *Destroy: /logout -->
 10. DB CRUD: Account.findOne @ GET /login /signup /checkout /thankyou /account, POST /buy, Order.findAll @ GET /account /thankyou, Event.create @ GET /checkout /thankyou
 11. Validation: input fields(not empty and minimum length password), availability e-mail
 12. Encryption: bcrypt.hash @ POST /signup, bcrypt.compare @ GET /login 

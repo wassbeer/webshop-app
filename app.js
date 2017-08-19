@@ -102,11 +102,11 @@ const Event = db.define( "event", {
 
 // Defining relations
 
-Account.hasMany(Order);
+Account.hasMany( Order );
 Order.belongsTo( Account );
 Account.hasMany( Event );
 Event.belongsTo( Account );
-Order.hasOne ( Event );
+Order.hasOne( Event );
 Event.belongsTo( Order );
 
 // GET
@@ -119,50 +119,114 @@ app.get( "/login", ( req, res ) => {
 
 } );
 
-app.get("/signup", (req, res ) => {
+app.get( "/signup", ( req, res ) => {
 
-})
+} )
 
 // Dynamic routes
 
 app.get( "/checkout/:id", ( req, res ) => {
-	// let user = req.session.user;
-	res.render( "checkout" );
+	let user = req.session.user;
+	if ( user === undefined ) {
+		let message = "Please log in to checkout!";
+		res.render( "login", { message: message } )
+	} else {
+		res.render( "checkout" )
+	};
 } );
 
-app.get("/thankyou/:id", (req, res) => {
+app.get( "/thankyou/:id", ( req, res ) => {
+	let user = req.session.user;
+	if ( user === undefined ) {
+		let message = "Please log in to receive grace from us!";
+		res.render( "login", { message: message } )
+	} else {
+		res.render( "thankyou" )
+	}
+} );
 
-});
-
-app.get("/account/:id", (req, res) => {
-
-});
+app.get( "/account/:id", ( req, res ) => {
+	let user = req.session.user;
+	if ( user === undefined ) {
+		let message = "Please log in to view your account!";
+		res.render( "login", { message: message } )
+	} else {
+		res.render( "account" )
+	}
+} );
 
 // POST
 
 app.post( "/login", ( req, res ) => {
-	// sign in 
-
-	// session
-	req.session.user = user;
-	res.redirect( "/checkout/" + user.firstname )
+	let email = req.body.email;
+	let plainPassword = req.body.password;
+	User.findOne( {
+			where: {
+				email: email
+			}
+		} )
+		.then( function( user ) {
+			hash = user.password;
+			if (
+				bcrypt.compare( plainPassword, hash ).then( function( res ) {
+					return res;
+				} ) ) {
+				req.session.user = user;
+				res.redirect( `/checkout/${account.first}` );
+			} else {
+				let message = "Invalid e-mail or password";
+				res.render( "login", {message: message} );
+			}
+		} )
+		.catch( function( error ) {
+			res.redirect( 'login/?message=' + encodeURIComponent( "Something going horribly wrong" ) );
+		} )
 } );
 
 app.post( "/signup", ( req, res ) => {
+	let plainPassword = req.body.password;
+	bcrypt.hash( plainPassword, saltRounds, function( err, hash ) {
 
+		User.findOne( {
+				where: {
+					username: req.body.username
+				}
+			} )
+			.then( function( user ) {
+				if ( user ) {
+					res.render( "signup", { message: `username ${req.body.username} already taken` } )
+				} else {
+					User.create( {
+							first: req.body.first,
+							last: req.body.last,
+							email: req.body.email,
+							username: req.body.username,
+							password: hash
+						} )
+						.then( ( user ) => {
+							res.redirect( "login" )
+						} )
+				}
+			} )
+	} )
 } );
 
 app.post( "/pay", ( req, res ) => {
 
 } );
 
-app.post( "/accountupdate", (req, res) => {
+app.post( "/accountupdate", ( req, res ) => {
 
-});
+} );
 
-app.post("/logout", (req, res) => {
-
-});
+app.post( "/logout", ( req, res ) => {
+	req.session.destroy( function( error ) {
+		if ( error ) {
+			throw error;
+		}
+		res.render( "index", { message: "logged out succesfully!" } )
+	} );
+} );
 
 // server launch
 
