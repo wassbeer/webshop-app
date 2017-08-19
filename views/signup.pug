@@ -1,0 +1,68 @@
+doctype html
+html
+	head 
+		link(rel='stylesheet' href='/css/main.css' type='text/css')
+		link(rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons")
+		link(rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.99.0/css/materialize.min.css")
+		link(rel="stylesheet" href="https://fonts.googleapis.com/css?family=Megrim|Space+Mono|Zilla+Slab+Highlight")
+		meta(name="viewport" content="width=device-width, initial-scale=1.0")
+	body
+		.container
+			.row.center
+				a(href="/")
+					img.responsive-img#logo(src="images/logo-black.png")
+			.row.center
+				h3 I'm a new hipster!
+				p.col.s8.offset-s2 Please fill in the form below to sign up as a new hipster and continue to with your purchase. 
+			.row.center
+				p ---
+			.row
+				form(action='/signup' method='POST' autocomplete='off' name="signupForm")
+					.row
+						p.center-align ACCOUNT INFORMATION
+					.row
+						.input-field.col.s4.offset-s2
+							input(type="text" name="firstname" required)
+							label(for="firstname") First name
+						.input-field.col.s4
+							input(type="text" name="lastname" required)
+							label(for="lastname") Last name
+					.row
+						.input-field.col.s8.offset-s2
+							input(type="email" name="email" required)
+							label(for="email") Email
+					.row
+						.input-field.col.s8.offset-s2
+							input(type="password" name="password" required)
+							label(for="password") Password
+					.row
+						.input-field.col.s8.offset-s2
+							input(type="password" name="confirmpassword" required)
+							label(for="confirmpassword") Confirm password
+					.row
+						p.center-align ADDRESS
+					.row
+						.input-field.col.s8.offset-s2
+							input(type="text" name="address" required)
+							label(for="address") Address
+					.row
+						.input-field.col.s3.offset-s2
+							input(type="text" name="zip" required)
+							label(for="zip") ZIP
+						.input-field.col.s5
+							input(type="text" name="city" required)
+							label(for="city") City
+					.row
+						.input-field.col.s8.offset-s2
+							input(type="text" name="country" required)
+							label(for="city") Country
+					.row.center
+						button.btn-flat.black.white-text(type="submit" name="submit") SIGN UP
+					.row
+						p.center-align Already got an account?
+					.row.center
+						a.btn-flat.black.white-text(href="/login") LOG IN
+
+		script(type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js")
+		script(src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.1/js/materialize.min.js")
+		script(src='/js/main.js')
