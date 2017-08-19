@@ -76,6 +76,9 @@ const Account = db.define( "account", {
 	},
 	zip: {
 		type: Sequelize.STRING
+	},
+	password: {
+		type: Sequelize.STRING
 	}
 } );
 
@@ -88,17 +91,17 @@ const Order = db.define( "order", {
 	}
 } )
 
-const Event = db.define( "event", {
-	type: {
-		type: Sequelize.STRING
-	},
-	amount: {
-		type: Sequelize.INTEGER
-	},
-	product: {
-		type: Sequelize.STRING
-	}
-} );
+// const Event = db.define( "event", {
+// 	type: {
+// 		type: Sequelize.STRING
+// 	},
+// 	amount: {
+// 		type: Sequelize.INTEGER
+// 	},
+// 	product: {
+// 		type: Sequelize.STRING
+// 	}
+// } );
 
 // Defining relations
 
@@ -112,15 +115,15 @@ Event.belongsTo( Order );
 // GET
 
 app.get( "/", ( req, res ) => {
-	res.send( "Application running!" )
+	res.render( "index" )
 } );
 
 app.get( "/login", ( req, res ) => {
-
+	res.render( "login" )
 } );
 
 app.get( "/signup", ( req, res ) => {
-
+	res.render( "signup" )
 } )
 
 // Dynamic routes
@@ -131,7 +134,17 @@ app.get( "/checkout/:id", ( req, res ) => {
 		let message = "Please log in to checkout!";
 		res.render( "login", { message: message } )
 	} else {
-		res.render( "checkout" )
+		Account.findOne( {
+				where: {
+					id: user.id
+				}
+			} )
+			.then( user => {
+				res.render( "checkout", { user: user } )
+			} )
+			.catch( error => {
+				res.redirect( 'login/?message=' + encodeURIComponent( "Something going horribly wrong" ) );
+			} )
 	};
 } );
 
@@ -141,7 +154,18 @@ app.get( "/thankyou/:id", ( req, res ) => {
 		let message = "Please log in to receive grace from us!";
 		res.render( "login", { message: message } )
 	} else {
-		res.render( "thankyou" )
+		Account.findOne( {
+				where: {
+					id: user.id
+				}
+			} )
+			.then( user => {
+				Order.findAll().then( order => {
+				res.render( "thankyou", { user: user, order: order } )
+			} )}).
+			.catch( error => {
+				res.redirect( 'login/?message=' + encodeURIComponent( "Something going horribly wrong" ) );
+			} )
 	}
 } );
 
@@ -151,7 +175,18 @@ app.get( "/account/:id", ( req, res ) => {
 		let message = "Please log in to view your account!";
 		res.render( "login", { message: message } )
 	} else {
-		res.render( "account" )
+		Account.findOne( {
+				where: {
+					id: user.id
+				}
+			} )
+			.then( user => {
+				Order.findAll().then( order => {
+				res.render( "account" { user: user } )
+			} )})
+			.catch( error => {
+				res.redirect( 'login/?message=' + encodeURIComponent( "Something going horribly wrong" ) );
+			} )
 	}
 } );
 
@@ -160,51 +195,56 @@ app.get( "/account/:id", ( req, res ) => {
 app.post( "/login", ( req, res ) => {
 	let email = req.body.email;
 	let plainPassword = req.body.password;
-	User.findOne( {
+	Account.findOne( {
 			where: {
 				email: email
 			}
 		} )
-		.then( function( user ) {
+		.then( user => {
 			hash = user.password;
 			if (
-				bcrypt.compare( plainPassword, hash ).then( function( res ) {
+				bcrypt.compare( plainPassword, hash ).then( res => {
 					return res;
 				} ) ) {
 				req.session.user = user;
 				res.redirect( `/checkout/${account.first}` );
 			} else {
 				let message = "Invalid e-mail or password";
-				res.render( "login", {message: message} );
+				res.render( "login", { message: message } );
 			}
 		} )
-		.catch( function( error ) {
+		.catch( error => {
 			res.redirect( 'login/?message=' + encodeURIComponent( "Something going horribly wrong" ) );
 		} )
 } );
 
 app.post( "/signup", ( req, res ) => {
 	let plainPassword = req.body.password;
-	bcrypt.hash( plainPassword, saltRounds, function( err, hash ) {
-
-		User.findOne( {
+	bcrypt.hash( plainPassword, saltRounds, ( err, hash )  => {
+		Account.findOne( {
 				where: {
 					username: req.body.username
 				}
 			} )
-			.then( function( user ) {
+			.then( user => {
 				if ( user ) {
 					res.render( "signup", { message: `username ${req.body.username} already taken` } )
 				} else {
-					User.create( {
+					Account.create( {
 							first: req.body.first,
 							last: req.body.last,
 							email: req.body.email,
-							username: req.body.username,
+							address: req.body.address,
+							city: req.body.city,
+							country: req.body.country,
+							zip: req.country.zip,
 							password: hash
 						} )
-						.then( ( user ) => {
+						.then( user  => {
 							res.redirect( "login" )
+						} )
+						.catch( error => {
+							res.redirect( 'login/?message=' + encodeURIComponent( "Something going horribly wrong" ) );
 						} )
 				}
 			} )
@@ -220,7 +260,7 @@ app.post( "/accountupdate", ( req, res ) => {
 } );
 
 app.post( "/logout", ( req, res ) => {
-	req.session.destroy( function( error ) {
+	req.session.destroy( error => {
 		if ( error ) {
 			throw error;
 		}
@@ -230,6 +270,6 @@ app.post( "/logout", ( req, res ) => {
 
 // server launch
 
-app.listen( port, function( res ) {
+app.listen( port, res => {
 	console.log( "App listening in port " + port )
 } )
