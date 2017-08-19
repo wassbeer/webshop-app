@@ -1,0 +1,23 @@
+.caption {
+  padding-top: 100px;
+}
+
+#formbox {
+  margin-top: 100px;
+}
+
+#login button {
+  margin: 20px;
+}
+
+#login form {
+  margin-top: 50px;
+}
+
+#signup button {
+  margin: 20px;
+}
+
+#signup form {
+  margin-top: 50px;
+}

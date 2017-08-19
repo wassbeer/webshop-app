@@ -1,0 +1,70 @@
+doctype html
+html
+	head 
+		link(rel='stylesheet', href='/css/main.css', type='text/css')
+		link(href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet")
+		link(rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.99.0/css/materialize.min.css")
+		meta(name="viewport" content="width=device-width, initial-scale=1.0")
+	body
+		.container
+			.row
+				#formbox.col.s8.offset-s2.z-depth-3.white
+					ul.tabs.tabs-fixed-width
+						li.tab.col.s3
+							a.active(href="#login") LOG IN
+						li.tab.col.s3
+							a(href="#signup") SIGN UP
+					
+					#login
+						form(action='/login' method='POST' autocomplete='off' name="loginForm")
+							.row
+								.input-field.col.s8.offset-s2
+									i.material-icons.prefix mail_outline
+									input#icon_prefix(type="email" name="email" required)
+									label(for="icon_prefix") Email
+							.row
+								.input-field.col.s8.offset-s2
+									i.material-icons.prefix lock_outline
+									input#icon_prefix(type="password" name="password" required)
+									label(for="icon_prefix") Password
+							.row
+								button.btn.right(type="submit" name="submit") LOGIN
+					
+					#signup
+						form(action='/signup' method='POST' autocomplete='off' name="signupForm")
+							.row
+								.input-field.col.s4.offset-s2
+									i.material-icons.prefix person
+									input#icon_prefix(type="text" name="firstname" required)
+									label(for="icon_prefix") First name
+								.input-field.col.s4
+									input#icon_prefix(type="text" name="lastname" required)
+									label(for="icon_prefix") Last name
+							.row
+								.input-field.col.s8.offset-s2
+									i.material-icons.prefix mail_outline
+									input#icon_prefix(type="email" name="email" required)
+									label(for="icon_prefix") Email
+							.row
+								.input-field.col.s8.offset-s2
+									i.material-icons.prefix lock_outline
+									input#icon_prefix(type="password" name="password" required)
+									label(for="icon_prefix") Password
+							.row
+								.input-field.col.s8.offset-s2
+									i.material-icons.prefix lock_outline
+									input#icon_prefix(type="password" name="confirmpassword" required)
+									label(for="icon_prefix") Confirm password
+							.row
+								p ----------------------------------------------
+							.row
+								.input-field.col.s4.offset-s2
+									i.material-icons.prefix person
+									input#icon_prefix(type="text" name="firstname" required)
+									label(for="icon_prefix") First name
+							.row
+								button.btn.right(type="submit" name="submit") SIGN UP
+
+		script(type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js")
+		script(src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.1/js/materialize.min.js")
+		script(src='/js/main.js')

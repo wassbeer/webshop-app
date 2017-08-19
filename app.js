@@ -97,6 +97,10 @@ app.get( "/", ( req, res ) => {
 	res.render( "index" )
 } );
 
+app.get( "/account", ( req, res ) => {
+	res.render( "account" )
+} );
+
 app.get( "/signin", ( req, res ) => {
 
 } );
