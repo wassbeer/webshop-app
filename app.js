@@ -19,7 +19,7 @@ var db = new Sequelize( "webshop_app", process.env.POSTGRES_USER, process.env.PO
 
 const app = express();
 
-// Configuring app 
+// Configuring app
 
 app.use( bodyParser.urlencoded( { extended: true } ) );
 app.use( express.static( __dirname + '/public' ) );
