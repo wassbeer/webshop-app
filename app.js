@@ -118,6 +118,11 @@ app.get( "/", ( req, res ) => {
 	res.render( "index" )
 } );
 
+//Temporary get request for checkout page for front-end purposes
+app.get( "/checkout", ( req, res ) => {
+	res.render( "checkout" )
+} );
+
 app.get( "/login", ( req, res ) => {
 	let user = req.session.user;
 	if ( user === undefined ) {
@@ -257,14 +262,14 @@ app.post( "/signup", ( req, res ) => {
 } );
 
 app.post( "/pay", ( req, res ) => {
-Order.create{
-	{	
+Order.create(
+	{
 		product: "Leather holder of 6-pack",
 		amount: orderQuantity
 	}.then( order => {
 		res.redirect("/thankyou/:id")
 	})
-}
+)
 } );
 
 app.post( "/accountupdate", ( req, res ) => {
