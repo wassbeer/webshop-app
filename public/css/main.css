@@ -27,3 +27,15 @@ body {
 #orderinfo {
   padding: 50px;
 }
+
+.slider a {
+  margin: 10px;
+}
+
+.italic {
+  font-style: italic;
+}
+
+.disclaimer {
+  font-size: 7pt;
+}

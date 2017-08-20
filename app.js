@@ -100,6 +100,11 @@ app.get( "/checkout", ( req, res ) => {
 	res.render( "checkout" )
 } );
 
+//Temporary get request for info page for front-end purposes
+app.get( "/info", ( req, res ) => {
+	res.render( "info" )
+} );
+
 app.get( "/login", ( req, res ) => {
 	let account = req.session.account;
 	if ( account === undefined ) {
