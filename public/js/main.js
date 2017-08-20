@@ -7,4 +7,6 @@ $(document).ready(() => {
     $('.slider').slider('next');
   });
 
+  $('.carousel').carousel();
+
 });
