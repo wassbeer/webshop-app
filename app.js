@@ -9,15 +9,18 @@ const express = require( 'express' ),
 	bcrypt = require( 'bcrypt' ),
 	saltRounds = 10,
 	port = process.env.PORT || 8000;
-  var db = new Sequelize( "webshop_app", process.env.POSTGRES_USER, process.env.POSTGRES_PASSWORD, {
+
+const app = express();
+
+// configuring db
+
+  const db = new Sequelize( "webshop_app", process.env.POSTGRES_USER, process.env.POSTGRES_PASSWORD, {
 	host: "localhost",
 	dialect: "postgres",
 	define: {
 		timestamps: false
 	}
 } )
-
-const app = express();
 
 // Configuring app
 
@@ -30,7 +33,7 @@ app.use( session( {
 		checkExpirationInterval: 15 * 60 * 1000,
 		expiration: 24 * 60 * 60 * 1000
 	} ),
-	saveUnitialized: true,
+	saveUninitialized: true,
 	resave: true
 } ) );
 
@@ -38,16 +41,6 @@ app.use( session( {
 
 app.set( "views", "./views" );
 app.set( "view engine", "pug" );
-
-// Configuring db
-
-db = new Sequelize( "webshop_app", process.env.POSTGRES_USER, process.env.POSTGRES_PASSWORD, {
-	host: "localhost",
-	dialect: "postgres",
-	define: {
-		timestamps: false
-	}
-} );
 
 // Establishing DB Connection
 
@@ -125,7 +118,7 @@ app.get( "/signup", ( req, res ) => {
 app.get( "/checkout/:id", ( req, res ) => {
 	var account = req.session.account;
 	console.log( "Account: " + account )
-	if ( !account ) {
+	if (!account) {
 		let message = "Please log in to checkout!";
 		res.render( "login", { message: message } )
 	} else {
