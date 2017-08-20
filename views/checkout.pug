@@ -57,17 +57,17 @@ html
 								p.col.s9 YOUR INFORMATION
 								p.col.s2.grey-text edit
 							.row
-								p.bold Firstname lastname
-								p Email
+								p.bold #{account.first} #{account.last}
+								p #{account.email}
 						.col.s6#shipping
 							.row
 								p.col.s9 SHIPPING ADDRESS
 								p.col.s2.grey-text edit
 							.row
-								p Firstname lastname
-								p Address
-								p ZIP, city
-								p Country
+								p.bold #{account.first} #{account.last}
+								p #{account.address}
+								p #{account.zip}, #{account.city}
+								p #{account.country}
 					.row
 						.col.s6#payment
 							.row
@@ -81,17 +81,16 @@ html
 								p.col.s9 BILLING INFORMATION
 								p.col.s2.grey-text edit
 							.row
-								p.bold Firstname lastname
-								p Address
-								p ZIP, city
-								p Country
-		
+								p.bold #{account.first} #{account.last}
+								p #{account.address}
+								p #{account.zip}, #{account.city}
+								p #{account.country}		
 			.row
-				p.right-align Everything set? Finish your order with PayPal!
+				p.center-align Everything set? Finish your order with PayPal!
 			.row
-				#paypal-button-container.right
+				#paypal-button-container.center
 
-		h1= account
+
 		//- form(method='POST' 
 		//- action='/amountBox' 
 		//- name='amountBox')
