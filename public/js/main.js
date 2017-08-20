@@ -5,6 +5,6 @@ $(document).ready(() => {
 
   $('img').click(() => {
     $('.slider').slider('next');
-  })
+  });
 
 });

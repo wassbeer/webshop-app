@@ -119,7 +119,12 @@ app.get( "/", ( req, res ) => {
 } );
 
 app.get( "/login", ( req, res ) => {
-	res.render( "login" )
+	let user = req.session.user;
+	if ( user === undefined ) {
+		res.render( "login" )
+	} else {
+		res.redirect( "/account/" + user.id )
+	}
 } );
 
 app.get( "/signup", ( req, res ) => {
