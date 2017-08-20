@@ -39,3 +39,7 @@ body {
 .disclaimer {
   font-size: 7pt;
 }
+
+select {
+  display: block !important;
+}
