@@ -1,10 +1,97 @@
 doctype html
 html
 	head
+		link(rel='stylesheet' href='/css/main.css' type='text/css')
+		link(rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons")
+		link(rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.99.0/css/materialize.min.css")
+		link(rel="stylesheet" href="https://fonts.googleapis.com/css?family=Megrim|Space+Mono|Zilla+Slab+Highlight")
+		meta(name="viewport" content="width=device-width, initial-scale=1.0")
 		meta(http-equiv='X-UA-Compatible', content='IE=edge')
 		script(src='https://www.paypalobjects.com/api/checkout.js')
 		script(src='http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js')
 	body
+		.container
+			.row.center
+				a(href="/")
+					img.responsive-img#logo(src="images/logo-black.png")
+			.row.center
+				h3 Check out
+				p.col.s8.offset-s2 You're almost the proud owner of the #1 must-have for hipsters.  
+			.row.center
+				p ---
+			.row
+				table
+					thead
+						tr
+							th Item
+							th
+							th Qty
+							th Price
+							th
+					tbody
+						tr
+							td
+								img(src="/images/product_thumb.jpg")
+							td 
+								p 6-STRAP
+								p Carry a 6-pack beer on your bike
+							td
+								.input-field 
+									input(type="number" value="1" min="1" max="100" name="amountBox")
+							td $59,99
+							td
+								i.material-icons delete
+			.row#line
+			.row
+				p.col.s2.offset-s9 Subtotal
+				p.col.s1 $59.99
+				p.col.s2.offset-s9 Shipping
+				p.col.s1 free
+				p.col.s2.offset-s9.bold TOTAL
+				p.col.s1.bold $59.99
+			.row.center
+				p ORDER INFORMATION
+			.row
+				.col.s12.z-depth-3.white#orderinfo
+					.row
+						.col.s6#yourinfo
+							.row
+								p.col.s9 YOUR INFORMATION
+								p.col.s2.grey-text edit
+							.row
+								p.bold Firstname lastname
+								p Email
+						.col.s6#shipping
+							.row
+								p.col.s9 SHIPPING ADDRESS
+								p.col.s2.grey-text edit
+							.row
+								p Firstname lastname
+								p Address
+								p ZIP, city
+								p Country
+					.row
+						.col.s6#payment
+							.row
+								p.col.s9 PAYMENT
+								p.col.s2.grey-text edit
+							.row
+								p.bold Paypal
+								p Email
+						.col.s6#billing
+							.row
+								p.col.s9 BILLING INFORMATION
+								p.col.s2.grey-text edit
+							.row
+								p.bold Firstname lastname
+								p Address
+								p ZIP, city
+								p Country
+		
+			.row
+				p.right-align Everything set? Finish your order with PayPal!
+			.row
+				#paypal-button-container.right
 
 		h1= account
 		//- form(method='POST' 
@@ -14,8 +101,11 @@ html
 		//- 	button#btn(type='submit', value='Submit')
 		//- 		br
 		//- 		i Please insert amount
-		#paypal-button-container
 
+
+		script(type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js")
+		script(src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.1/js/materialize.min.js")
+		script(src='/js/main.js')
 		script.
 			paypal.Button.render({
 			env: 'sandbox', // sandbox | production

@@ -14,3 +14,16 @@ body {
 #logo {
   margin-top: 50px;
 }
+
+#line {
+  border-top: 1px solid grey;
+}
+
+.bold {
+  font-weight: bold;
+  font-style: italic;
+}
+
+#orderinfo {
+  padding: 50px;
+}
