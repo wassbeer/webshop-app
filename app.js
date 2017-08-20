@@ -14,7 +14,7 @@ const app = express();
 
 // configuring db
 
-  const db = new Sequelize( "webshop_app", process.env.POSTGRES_USER, process.env.POSTGRES_PASSWORD, {
+  const db = new Sequelize( "webshop_app_1", process.env.POSTGRES_USER, process.env.POSTGRES_PASSWORD, {
 	host: "localhost",
 	dialect: "postgres",
 	define: {
@@ -141,7 +141,7 @@ app.get( "/checkout/:id", ( req, res ) => {
 	};
 } );
 
-app.get( "/thankyou/:id", ( req, res ) => {
+app.get( "/thankyou", ( req, res ) => {
 	var account = req.session.account;
 	if ( !account ) {
 		let message = "Please log in to receive grace from us!";

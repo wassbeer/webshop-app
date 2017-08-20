@@ -93,7 +93,6 @@ html
 			.row
 				#paypal-button-container.right
 
-		h1= account
 		//- form(method='POST' 
 		//- action='/amountBox' 
 		//- name='amountBox')
@@ -112,8 +111,8 @@ html
 			// PayPal Client IDs - replace with your own
 			// Create a PayPal app: https://developer.paypal.com/developer/applications/create
 			client: {
-			sandbox:    'AFcWxV21C7fd0v3bYYYRCpSSRl31ArSMlXE5bY1dwzpmmg.LzJ.OkoLM',
-			production: 'AXH9Iq45g7nDnl6IGFKMg2lr2RHb8Va0Cn-1jlyI2MPx-LyAGydK4eGTyPWCHlXKULP5Qphsnjhu0X62'
+			sandbox:    'AZDxjDScFpQtjWTOUtWKbyN_bDt4OgqaF4eYXlewfBP4-8aqX3PiV8e1GWU6liB2CUXlkA59kJXE7M6R',
+			production: '<insert production client id>'
 			},
 			// Show the buyer a 'Pay Now' button in the checkout flow
 			commit: true,
@@ -122,7 +121,7 @@ html
 			// Make a call to the REST api to create the payment
 			var totalPrice = 
 			//- req.body.amountBox * 10.00;
-			"30.00";
+			"0.01";
 
 			return actions.payment.create({
 			payment: {
@@ -145,5 +144,6 @@ html
 				//- 			$.post("/pay", {orderQuantity: orderQuantity});
 				//- 		})});
 			window.alert('Payment Complete!');
+			window.location="http://localhost:8000/thankyou";
 			});
 			}}, '#paypal-button-container');
