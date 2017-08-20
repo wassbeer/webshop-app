@@ -117,7 +117,6 @@ app.get( "/signup", ( req, res ) => {
 
 app.get( "/checkout/:id", ( req, res ) => {
 	var account = req.session.account;
-	console.log( "Account: " + account )
 	if (!account) {
 		let message = "Please log in to checkout!";
 		res.render( "login", { message: message } )
@@ -211,7 +210,6 @@ app.post( "/login", ( req, res ) => {
 		} )
 		.catch( error => {
 			res.redirect( 'login/?message=' + encodeURIComponent( "Something going horribly wrong" ) );
-			console.log( "Error: " + error );
 		} )
 } );
 
@@ -238,6 +236,7 @@ app.post( "/signup", ( req, res ) => {
 							password: hash
 						} )
 						.then( account => {
+							req.session.account = 
 							res.redirect( "login" )
 						} )
 						.catch( error => {

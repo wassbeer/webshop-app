@@ -13,6 +13,7 @@
     "bcrypt": "^1.0.2",
     "body-parser": "^1.17.2",
     "connect-session-sequelize": "^4.1.0",
+    "cookie-parser": "^1.4.3",
     "express": "^4.15.4",
     "express-session": "^1.15.5",
     "paypal-rest-sdk": "^1.7.1",
