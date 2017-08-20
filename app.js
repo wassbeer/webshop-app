@@ -107,10 +107,10 @@ const Order = db.define( "order", {
 
 Account.hasMany( Order );
 Order.belongsTo( Account );
-Account.hasMany( Event );
-Event.belongsTo( Account );
-Order.hasOne( Event );
-Event.belongsTo( Order );
+// Account.hasMany( Event );
+// Event.belongsTo( Account );
+// Order.hasOne( Event );
+// Event.belongsTo( Order );
 
 // GET
 
@@ -129,23 +129,24 @@ app.get( "/signup", ( req, res ) => {
 // Dynamic routes
 
 app.get( "/checkout/:id", ( req, res ) => {
-	let user = req.session.user;
-	if ( user === undefined ) {
-		let message = "Please log in to checkout!";
-		res.render( "login", { message: message } )
-	} else {
-		Account.findOne( {
-				where: {
-					id: user.id
-				}
-			} )
-			.then( user => {
-				res.render( "checkout", { user: user } )
-			} )
-			.catch( error => {
-				res.redirect( 'login/?message=' + encodeURIComponent( "Something going horribly wrong" ) );
-			} )
-	};
+	res.render("checkout")
+	// let user = req.session.user;
+	// if ( user === undefined ) {
+	// 	let message = "Please log in to checkout!";
+	// 	res.render( "login", { message: message } )
+	// } else {
+	// 	Account.findOne( {
+	// 			where: {
+	// 				id: user.id
+	// 			}
+	// 		} )
+	// 		.then( user => {
+	// 			res.render( "checkout", { user: user } )
+	// 		} )
+	// 		.catch( error => {
+	// 			res.redirect( 'login/?message=' + encodeURIComponent( "Something going horribly wrong" ) );
+	// 		} )
+	// };
 } );
 
 app.get( "/thankyou/:id", ( req, res ) => {
@@ -162,7 +163,7 @@ app.get( "/thankyou/:id", ( req, res ) => {
 			.then( user => {
 				Order.findAll().then( order => {
 				res.render( "thankyou", { user: user, order: order } )
-			} )}).
+			} )})
 			.catch( error => {
 				res.redirect( 'login/?message=' + encodeURIComponent( "Something going horribly wrong" ) );
 			} )
@@ -182,7 +183,7 @@ app.get( "/account/:id", ( req, res ) => {
 			} )
 			.then( user => {
 				Order.findAll().then( order => {
-				res.render( "account" { user: user } )
+				res.render( "account", { user: user } )
 			} )})
 			.catch( error => {
 				res.redirect( 'login/?message=' + encodeURIComponent( "Something going horribly wrong" ) );
@@ -252,14 +253,12 @@ app.post( "/signup", ( req, res ) => {
 } );
 
 app.post( "/pay", ( req, res ) => {
-Order.create{
-	{	
+Order.create({
 		product: "Leather holder of 6-pack",
 		amount: orderQuantity
-	}.then( order => {
+	}).then( order => {
 		res.redirect("/thankyou/:id")
 	})
-}
 } );
 
 app.post( "/accountupdate", ( req, res ) => {

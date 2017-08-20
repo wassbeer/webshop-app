@@ -26,6 +26,7 @@ STEPS:
 <!-- 12. Encryption: bcrypt.hash @ POST /signup, bcrypt.compare @ GET /login  -->
 
 BEYOND MVP:
+* Deleting order from history
 * Event logging: Event model, Event.create in /checkout and /thankyou route to see potential buyers
 * Add "Start session", "Destroy session" and "Visit time" to the model Event and create a row on entering and leaving the site.
 * Make a little password validator on the client side that evaluates the password on the use of capitals, nonliterals, and small letters. Update the input field text and the validation message when incorrect.

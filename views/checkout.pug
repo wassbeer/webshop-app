@@ -5,8 +5,15 @@ html
 		script(src='https://www.paypalobjects.com/api/checkout.js')
 		script(src='http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js')
 	body
-		input#amountBox(type="number" name="quantity" min="1" max="100")
+		//- form(method='POST' 
+		//- action='/amountBox' 
+		//- name='amountBox')
+		//- 	input#amountBox(type="number" min="1" max="100" name="amountBox")
+		//- 	button#btn(type='submit', value='Submit')
+		//- 		br
+		//- 		i Please insert amount
 		#paypal-button-container
+
 		script.
 			paypal.Button.render({
 			env: 'sandbox', // sandbox | production
@@ -19,28 +26,32 @@ html
 			// Show the buyer a 'Pay Now' button in the checkout flow
 			commit: true,
 			// payment() is called when the button is clicked
-			payment: (data, actions) => {
+			payment: function (data, actions) {
 			// Make a call to the REST api to create the payment
+			var totalPrice = 
+			//- req.body.amountBox * 10.00;
+			"30.00";
+
 			return actions.payment.create({
 			payment: {
 			transactions: [
 			{
-			amount: { total: '10.00', currency: 'USD' }
+			amount: { total: `${totalPrice}`, currency: 'USD' }
 			}
 			]
 			}
 			});
 			},
 			// onAuthorize() is called when the buyer approves the payment
-			onAuthorize: (data, actions) => {
+			onAuthorize: function (data, actions) {
 			// Make a call to the REST api to execute the payment
 
-			return actions.payment.execute().then( ()=> {
-				$(document).ready(() =>{
-					//- let orderQuantity = req.body.orderQuantity
-					let orderQuantity = $("#amountBox").val();
-							$.post("/pay", {orderQuantity: orderQuantity});
-						})});
+			return actions.payment.execute().then( function() {
+				//- $(document).ready(() =>{
+				//- 	//- let orderQuantity = req.body.orderQuantity
+				//- 	let orderQuantity = $("#amountBox").val();
+				//- 			$.post("/pay", {orderQuantity: orderQuantity});
+				//- 		})});
 			window.alert('Payment Complete!');
-			};
-			}, '#paypal-button-container');
+			});
+			}}, '#paypal-button-container');
