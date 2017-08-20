@@ -9,7 +9,7 @@ const express = require( 'express' ),
 	bcrypt = require( 'bcrypt' ),
 	saltRounds = 10,
 	port = process.env.PORT || 8000;
-var db = new Sequelize( "webshop_app", process.env.POSTGRES_USER, process.env.POSTGRES_PASSWORD, {
+  var db = new Sequelize( "webshop_app", process.env.POSTGRES_USER, process.env.POSTGRES_PASSWORD, {
 	host: "localhost",
 	dialect: "postgres",
 	define: {
@@ -24,7 +24,7 @@ const app = express();
 app.use( bodyParser.urlencoded( { extended: true } ) );
 app.use( express.static( __dirname + '/public' ) );
 app.use( session( {
-	secret: "whatever",
+	secret: "shizzle",
 	store: new SequelizeStore( {
 		db: db,
 		checkExpirationInterval: 15 * 60 * 1000,
@@ -45,7 +45,7 @@ db = new Sequelize( "webshop_app", process.env.POSTGRES_USER, process.env.POSTGR
 	host: "localhost",
 	dialect: "postgres",
 	define: {
-		timestamps: true
+		timestamps: false
 	}
 } );
 
@@ -91,26 +91,10 @@ const Order = db.define( "order", {
 	}
 } )
 
-// const Event = db.define( "event", {
-// 	type: {
-// 		type: Sequelize.STRING
-// 	},
-// 	amount: {
-// 		type: Sequelize.INTEGER
-// 	},
-// 	product: {
-// 		type: Sequelize.STRING
-// 	}
-// } );
-
 // Defining relations
 
 Account.hasMany( Order );
 Order.belongsTo( Account );
-// Account.hasMany( Event );
-// Event.belongsTo( Account );
-// Order.hasOne( Event );
-// Event.belongsTo( Order );
 
 // GET
 
@@ -124,11 +108,11 @@ app.get( "/checkout", ( req, res ) => {
 } );
 
 app.get( "/login", ( req, res ) => {
-	let user = req.session.user;
-	if ( user === undefined ) {
+	let account = req.session.account;
+	if ( account === undefined ) {
 		res.render( "login" )
 	} else {
-		res.redirect( "/account/" + user.id )
+		res.redirect( "/account/" + account.id )
 	}
 } );
 
@@ -139,18 +123,20 @@ app.get( "/signup", ( req, res ) => {
 // Dynamic routes
 
 app.get( "/checkout/:id", ( req, res ) => {
-	let user = req.session.user;
-	if ( user === undefined ) {
+	var account = req.session.account;
+	console.log( "Account: " + account )
+	if ( !account ) {
 		let message = "Please log in to checkout!";
 		res.render( "login", { message: message } )
 	} else {
 		Account.findOne( {
 				where: {
-					id: user.id
+					id: account.id
 				}
 			} )
-			.then( user => {
-				res.render( "checkout", { user: user } )
+			.then( account => {
+				console.log( "account! : " + account )
+				res.render( "checkout", { account: account } )
 			} )
 			.catch( error => {
 				res.redirect( 'login/?message=' + encodeURIComponent( "Something going horribly wrong" ) );
@@ -159,20 +145,21 @@ app.get( "/checkout/:id", ( req, res ) => {
 } );
 
 app.get( "/thankyou/:id", ( req, res ) => {
-	let user = req.session.user;
-	if ( user === undefined ) {
+	var account = req.session.account;
+	if ( !account ) {
 		let message = "Please log in to receive grace from us!";
 		res.render( "login", { message: message } )
 	} else {
 		Account.findOne( {
 				where: {
-					id: user.id
+					id: account.id
 				}
 			} )
-			.then( user => {
+			.then( account => {
 				Order.findAll().then( order => {
-				res.render( "thankyou", { user: user, order: order } )
-			} )})
+					res.render( "thankyou", { account: account, order: order } )
+				} )
+			} )
 			.catch( error => {
 				res.redirect( 'login/?message=' + encodeURIComponent( "Something going horribly wrong" ) );
 			} )
@@ -180,20 +167,21 @@ app.get( "/thankyou/:id", ( req, res ) => {
 } );
 
 app.get( "/account/:id", ( req, res ) => {
-	let user = req.session.user;
-	if ( user === undefined ) {
+	let account = req.session.account;
+	if ( account === undefined ) {
 		let message = "Please log in to view your account!";
 		res.render( "login", { message: message } )
 	} else {
 		Account.findOne( {
 				where: {
-					id: user.id
+					id: account.id
 				}
 			} )
-			.then( user => {
+			.then( account => {
 				Order.findAll().then( order => {
-				res.render( "account", { user: user } )
-			} )})
+					res.render( "account", { account: account } )
+				} )
+			} )
 			.catch( error => {
 				res.redirect( 'login/?message=' + encodeURIComponent( "Something going horribly wrong" ) );
 			} )
@@ -203,41 +191,47 @@ app.get( "/account/:id", ( req, res ) => {
 // POST
 
 app.post( "/login", ( req, res ) => {
-	let email = req.body.email;
-	let plainPassword = req.body.password;
+	let email = req.body.email,
+		plainPassword = req.body.password;
 	Account.findOne( {
 			where: {
 				email: email
 			}
 		} )
-		.then( user => {
-			hash = user.password;
-			if (
-				bcrypt.compare( plainPassword, hash ).then( res => {
-					return res;
-				} ) ) {
-				req.session.user = user;
-				res.redirect( `/checkout/${account.first}` );
+		.then( account => {
+			if ( !account ) { // validate membership
+				let message = ( "we have not registered an e-mail with this account yet, please enter the correct e-mail or create an account" )
+				res.render( "login", { message: message } )
 			} else {
-				let message = "Invalid e-mail or password";
-				res.render( "login", { message: message } );
+				hash = account.password;
+				if ( // validate password
+					bcrypt.compare( plainPassword, hash ).then( res => {
+						return res;
+					} ) ) { // initiate session
+					req.session.account = account;
+					res.redirect( `/checkout/${account.id}` );
+				} else {
+					let message = "Invalid e-mail or password";
+					res.render( "login", { message: message } );
+				}
 			}
 		} )
 		.catch( error => {
 			res.redirect( 'login/?message=' + encodeURIComponent( "Something going horribly wrong" ) );
+			console.log( "Error: " + error );
 		} )
 } );
 
 app.post( "/signup", ( req, res ) => {
 	let plainPassword = req.body.password;
-	bcrypt.hash( plainPassword, saltRounds, ( err, hash )  => {
+	bcrypt.hash( plainPassword, saltRounds, ( err, hash ) => {
 		Account.findOne( {
 				where: {
-					username: req.body.username
+					email: req.body.email
 				}
 			} )
-			.then( user => {
-				if ( user ) {
+			.then( account => {
+				if ( account ) {
 					res.render( "signup", { message: `username ${req.body.username} already taken` } )
 				} else {
 					Account.create( {
@@ -247,10 +241,10 @@ app.post( "/signup", ( req, res ) => {
 							address: req.body.address,
 							city: req.body.city,
 							country: req.body.country,
-							zip: req.country.zip,
+							zip: req.body.zip,
 							password: hash
 						} )
-						.then( user  => {
+						.then( account => {
 							res.redirect( "login" )
 						} )
 						.catch( error => {
@@ -262,14 +256,12 @@ app.post( "/signup", ( req, res ) => {
 } );
 
 app.post( "/pay", ( req, res ) => {
-Order.create(
-	{
+	Order.create( {
 		product: "Leather holder of 6-pack",
 		amount: orderQuantity
-	}.then( order => {
-		res.redirect("/thankyou/:id")
-	})
-)
+	} ).then( order => {
+		res.redirect( "/thankyou/:id" )
+	} )
 } );
 
 app.post( "/accountupdate", ( req, res ) => {
