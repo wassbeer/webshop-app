@@ -14,7 +14,7 @@ const app = express();
 
 // configuring db
 
-  const db = new Sequelize( "webshop_app_1", process.env.POSTGRES_USER, process.env.POSTGRES_PASSWORD, {
+const db = new Sequelize( "webshop_app_1", process.env.POSTGRES_USER, process.env.POSTGRES_PASSWORD, {
 	host: "localhost",
 	dialect: "postgres",
 	define: {
@@ -110,7 +110,7 @@ app.get( "/login", ( req, res ) => {
 	if ( account === undefined ) {
 		res.render( "login" )
 	} else {
-		res.redirect( "/account/" + account.id )
+		res.redirect( "/checkout/" + account.id )
 	}
 } );
 
@@ -122,7 +122,7 @@ app.get( "/signup", ( req, res ) => {
 
 app.get( "/checkout/:id", ( req, res ) => {
 	var account = req.session.account;
-	if (!account) {
+	if ( !account ) {
 		let message = "Please log in to checkout!";
 		res.render( "login", { message: message } )
 	} else {
@@ -147,20 +147,16 @@ app.get( "/thankyou", ( req, res ) => {
 		let message = "Please log in to receive grace from us!";
 		res.render( "login", { message: message } )
 	} else {
-		Account.findOne( {
-				where: {
-					id: account.id
-				}
-			} )
-			.then( account => {
-				Order.findAll().then( order => {
-					res.render( "thankyou", { account: account, order: order } )
-				} )
-			} )
-			.catch( error => {
-				res.redirect( 'login/?message=' + encodeURIComponent( "Something going horribly wrong" ) );
-			} )
-	}
+		Order.create( {
+			product: "6-strap",
+			amount: 1,
+			accountId: account.id
+		} ).then(
+			res.render( "thankyou" )
+		)
+	.catch( error => {
+		res.redirect( 'login/?message=' + encodeURIComponent( "Something going horribly wrong" ) );
+	} )}
 } );
 
 app.get( "/account/:id", ( req, res ) => {
@@ -175,14 +171,18 @@ app.get( "/account/:id", ( req, res ) => {
 				}
 			} )
 			.then( account => {
-				Order.findAll().then( order => {
-					res.render( "account", { account: account } )
-				} )
+				Order.findAll( {
+					where: {
+						accountId: account.id
+					}
+				});
 			} )
-			.catch( error => {
-				res.redirect( 'login/?message=' + encodeURIComponent( "Something going horribly wrong" ) );
+			.then( order => {
+				res.render( "account", { account: account }, {order: order} )
 			} )
-	}
+	.catch( error => {
+		res.redirect( 'login/?message=' + encodeURIComponent( "Something going horribly wrong" ) );
+	} );}
 } );
 
 // POST
@@ -241,23 +241,14 @@ app.post( "/signup", ( req, res ) => {
 							password: hash
 						} )
 						.then( account => {
-							req.session.account = 
-							res.redirect( "login" )
+							req.session.account =
+								res.redirect( "login" )
 						} )
 						.catch( error => {
 							res.redirect( 'login/?message=' + encodeURIComponent( "Something going horribly wrong" ) );
 						} )
 				}
 			} )
-	} )
-} );
-
-app.post( "/pay", ( req, res ) => {
-	Order.create( {
-		product: "Leather holder of 6-pack",
-		amount: orderQuantity
-	} ).then( order => {
-		res.redirect( "/thankyou/:id" )
 	} )
 } );
 
